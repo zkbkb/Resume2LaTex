@@ -1,6 +1,6 @@
 # Resume2LaTeX - Generate Formatted Resume in LaTeX
 [![Functionality Test](https://github.com/zkbkb/Resume2LaTex/actions/workflows/ci.yml/badge.svg)](https://github.com/zkbkb/Resume2LaTex/actions/workflows/ci.yml)
-![Python](https://img.shields.io/badge/Python-3.6+-blue.svg)
+![Python](https://img.shields.io/badge/Python-3.6+-blue.svg) [![Pylint](https://github.com/zkbkb/Resume2LaTex/actions/workflows/pylint.yml/badge.svg)](https://github.com/zkbkb/Resume2LaTex/actions/workflows/pylint.yml)
 
 A python script that generates a formatted resume from structured JSON data to a formatted resume page in LaTeX format, with optional PDF compilation.
 
