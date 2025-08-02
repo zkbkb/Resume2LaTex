@@ -135,13 +135,6 @@ The JSON file should contain the following structure:
 - **Interactive Help**: User-friendly help system when no arguments are provided
 - **Template Generation**: Creates ready-to-use JSON templates with examples
 
-## Notes
-
-- The script automatically escapes LaTeX special characters (`{`, `}`, `&`, `%`)
-- All output messages are in plain text (no emojis)
-- The generated LaTeX file follows a clean, professional format
-- Template includes detailed examples to guide users
-
 ## Error Handling
 
 If you run the script without arguments, it will display:
@@ -153,3 +146,68 @@ Need help? (y/n)
 ```
 
 Responding with 'y' will show detailed help information. 
+
+## Notes
+
+```mermaid
+flowchart TB
+    %% Actors
+    User(["User / Developer"]):::actor
+
+    %% Script Modules Subgraph
+    subgraph "Resume2LaTeX Script"
+        direction TB
+        CLIParser["CLI Parser"]:::internal
+        TemplateGen["Template Generator"]:::internal
+        JSONParser["JSON Parser / Validator"]:::internal
+        Formatter["LaTeX Formatter"]:::internal
+        FilenameGen["Filename Generator"]:::internal
+        Validator["LaTeX Syntax Validator"]:::internal
+    end
+
+    %% File System Data Stores
+    subgraph "File System"
+        direction TB
+        TemplateFile[("resume_template.json")]:::datastore
+        InputExample[("sample.json")]:::datastore
+        OutputExample[("sample.tex")]:::datastore
+        README[("README.md")]:::datastore
+        LICENSE[("LICENSE")]:::datastore
+    end
+
+    %% External Dependency
+    ExternalCompiler(["LaTeX Compiler"]):::external
+
+    %% Flows
+    User --> CLIParser
+    CLIParser -->|"--template"| TemplateGen
+    TemplateGen --> TemplateFile
+    TemplateGen -->|"console output"| User
+
+    CLIParser -->|".json input"| JSONParser
+    JSONParser --> Formatter
+    Formatter --> FilenameGen
+    FilenameGen --> OutputExample
+    FilenameGen -->|"console output"| User
+    FilenameGen --> Validator
+    Validator --> ExternalCompiler
+    ExternalCompiler --> Validator
+    Validator -->|"validation status"| User
+
+    CLIParser -->|"--check .tex"| Validator
+
+    %% Example files as optional input/output
+    User --> InputExample
+    User --> OutputExample
+
+    %% Styles
+    classDef actor fill:#f9f,stroke:#333,stroke-width:2px,shape:ellipse
+    classDef internal fill:#bbf,stroke:#333,stroke-width:1px
+    classDef datastore fill:#bfb,stroke:#333,stroke-width:1px,shape:cylinder
+    classDef external fill:#ffb,stroke:#333,stroke-width:1px,shape:hexagon
+```
+
+- The script automatically escapes LaTeX special characters (`{`, `}`, `&`, `%`)
+- All output messages are in plain text (no emojis)
+- The generated LaTeX file follows a clean, professional format
+- Template includes detailed examples to guide users
