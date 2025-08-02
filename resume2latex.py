@@ -22,43 +22,64 @@ def escape_latex(text):
     """Escape LaTeX special characters in text"""
     if not text:
         return ""
-    return text.replace('{', '\\{').replace('}', '\\}').replace('&', '\\&').replace('%', '\\%')
+    
+    # Note: order matters for backslash
+    text = text.replace('\\', '\\\\')  # Escape backslashes first
+    text = text.replace('&', '\\&')
+    text = text.replace('%', '\\%')
+    text = text.replace('$', '\\$')
+    text = text.replace('#', '\\#')
+    text = text.replace('_', '\\_')
+    text = text.replace('{', '\\{')
+    text = text.replace('}', '\\}')
+    text = text.replace('~', '\\textasciitilde{}')
+    text = text.replace('^', '\\textasciicircum{}')
+    
+    return text
 
 def get_single_char_input():
     """Get a single character input without requiring Enter key"""
     try:
-        if platform.system() == "Windows":
-            try:
-                import msvcrt
-                return msvcrt.getch().decode('utf-8').lower()
-            except ImportError:
-                try:
-                    return input().strip().lower()
-                except EOFError:
-                    return "n"  # Default to no if input is not available
-        else:
-            try:
-                import tty
-                import termios
-                fd = sys.stdin.fileno()
-                old_settings = termios.tcgetattr(fd)
-                try:
-                    tty.setraw(sys.stdin.fileno())
-                    ch = sys.stdin.read(1)
-                finally:
-                    termios.tcsetattr(fd, termios.TCSADRAIN, old_settings)
-                return ch.lower()
-            except (OSError, IOError, ImportError, termios.error):
-                try:
-                    return input().strip().lower()
-                except EOFError:
-                    return "n"  # Default to no if input is not available
-    except (OSError, IOError):
-        # Fallback to regular input if terminal is not interactive
-        try:
-            return input().strip().lower()
-        except EOFError:
-            return "n"  # Default to no if input is not available
+        return input().strip().lower()
+    except (EOFError, KeyboardInterrupt):
+        return "n"  # Default to no if input is not available
+
+def validate_file_path(file_path):
+    """Validate file path for security"""
+    if not file_path or not isinstance(file_path, str):
+        return False
+    
+    # Check for path traversal attempts
+    if '..' in file_path or file_path.startswith('/'):
+        return False
+    
+    # Check for potentially dangerous characters
+    dangerous_chars = [';', '|', '&', '`', '$', '(', ')', '{', '}', '[', ']', '"', "'"]
+    if any(char in file_path for char in dangerous_chars):
+        return False
+    
+    return True
+
+def safe_subprocess_run(cmd, **kwargs):
+    """Safely run subprocess with validation"""
+    if not isinstance(cmd, list) or not cmd:
+        raise ValueError("Command must be a non-empty list")
+    
+    # Validate each command argument
+    for arg in cmd:
+        if not isinstance(arg, str) or not arg.strip():
+            raise ValueError("Command arguments must be non-empty strings")
+    
+    # Only allow specific safe commands
+    safe_commands = {
+        'brew', 'apt-get', 'yum', 'which', 'pdflatex', 'latexmk',
+        'python3', 'pip', 'curl', 'wget'
+    }
+    
+    if cmd[0] not in safe_commands:
+        raise ValueError(f"Command '{cmd[0]}' is not in the allowed list")
+    
+    return subprocess.run(cmd, **kwargs)
 
 def generate_output_filename(resume_data):
     """Generate output filename based on name"""
@@ -79,6 +100,10 @@ def generate_output_filename(resume_data):
 
 def load_resume_data(json_file):
     """Load resume data from JSON file"""
+    if not validate_file_path(json_file):
+        print(f"Error: Invalid file path: {json_file}")
+        sys.exit(1)
+    
     try:
         with open(json_file, 'r', encoding='utf-8') as f:
             return json.load(f)
@@ -126,83 +151,50 @@ def generate_latex_header():
 \addtolength{\topmargin}{-.5in}
 \addtolength{\textheight}{1.0in}
 
-\urlstyle{same}
-\raggedbottom
-\raggedright
-\setlength{\tabcolsep}{0in}
-
-%---------- SECTION FORMATTING ----------
-\titleformat{\section}{
-  \vspace{-4pt}\scshape\raggedright\large
-}{}{0em}{}[\color{black}\titlerule \vspace{-5pt}]
-
-% Ensure that generate pdf is machine readable/ATS parsable
-\pdfgentounicode=1
-
 %---------- CUSTOM COMMANDS ----------
-
-% Basic item command
 \newcommand{\resumeItem}[1]{
-  \item \small{ #1 }
+  \item\small{
+    {#1 \vspace{-2pt}}
+  }
 }
 
-% Subheading with 4 parameters: company, location, position, date
 \newcommand{\resumeSubheading}[4]{
   \vspace{-2pt}\item
     \begin{tabular*}{0.97\textwidth}[t]{l@{\extracolsep{\fill}}r}
       \textbf{#1} & #2 \\
-      {\small #3} & {\small #4} \\
-    \end{tabular*}\vspace{-7pt}
+      \textit{\small#3} & \textit{\small #4} \\
+    \end{tabular*}\vspace{-5pt}
 }
 
-% Sub-subheading with 2 parameters: title, date
 \newcommand{\resumeSubSubheading}[2]{
-    \vspace{-2pt}\item
+    \item
     \begin{tabular*}{0.97\textwidth}{l@{\extracolsep{\fill}}r}
-      {\small #1} & {\small #2} \\
-    \end{tabular*}\vspace{-7pt}
+      \textit{#1} & \textit{#2} \\
+    \end{tabular*}\vspace{-5pt}
 }
 
-% Education heading with 4 parameters: university, location, degree, date
-\newcommand{\resumeEducationHeading}[4]{
-  \vspace{-2pt}\item
-    \begin{tabular*}{0.97\textwidth}[t]{l@{\extracolsep{\fill}}r}
-      \textbf{#1} & #2 \\
-      {\small #3} & {\small #4} \\
-    \end{tabular*}\vspace{-7pt}
-}
-
-% Project heading with 2 parameters: project name, date
-\newcommand{\resumeProjectHeading}[2]{
-    \vspace{-2pt}\item
+\newcommand{\resumeProjectHeading}[4]{
+    \item
     \begin{tabular*}{0.97\textwidth}{l@{\extracolsep{\fill}}r}
-      \small#1 & #2 \\
-    \end{tabular*}\vspace{-7pt}
+      \textbf{#1} $|$ \textit{#2} & #3 \\
+      \textit{\small#4} \\
+    \end{tabular*}\vspace{-5pt}
 }
 
-% Organization heading with 4 parameters: company, date, position, location
-\newcommand{\resumeOrganizationHeading}[4]{
-  \vspace{-2pt}\item
-    \begin{tabular*}{0.97\textwidth}[t]{l@{\extracolsep{\fill}}r}
-      \textbf{#1} & \textit{\small #2} \\
-      \textit{\small#3}
-    \end{tabular*}\vspace{-7pt}
+\newcommand{\resumeSectionStart}[1]{
+  \section{#1}
+  \begin{itemize}[leftmargin=0.15in, label={}]
+    \small{\item}
 }
 
-% Sub-item with extra spacing
-\newcommand{\resumeSubItem}[1]{\resumeItem{#1}\vspace{-4pt}}
+\newcommand{\resumeSectionEnd}{
+  \end{itemize}
+}
 
-% List environment commands
-\newcommand{\resumeSubHeadingListStart}{\begin{itemize}[leftmargin=0.15in, label={}]}
-\newcommand{\resumeSubHeadingListEnd}{\end{itemize}}
-\newcommand{\resumeItemListStart}{\begin{itemize}[leftmargin=*, itemsep=2pt, label=\textbullet]}
-\newcommand{\resumeItemListEnd}{\end{itemize}\vspace{-5pt}}
-
-%-------------------------------------------
-%%%%%%  RESUME STARTS HERE  %%%%%%%%%%%%%%%%%%%%%%%%%%%
-
+%---------- DOCUMENT ----------
 \begin{document}
 
+%---------- HEADING ----------
 """
 
 def generate_heading(personal_info):
@@ -850,53 +842,22 @@ def install_latex():
     system = platform.system()
 
     if system == "Darwin":  # macOS
-        print("Installing LaTeX distribution (basictex) on macOS...")
-        try:
-            result = subprocess.run(
-                ["brew", "install", "--cask", "basictex"],
-                capture_output=True, text=True, check=True
-            )
-            print("LaTeX installation completed successfully!")
-            print("Please restart your terminal or run:")
-            print("  export PATH=$PATH:/usr/local/texlive/2024basic/bin/universal-darwin")
-            return True
-        except subprocess.CalledProcessError as e:
-            print(f"Error installing LaTeX: {e}")
-            print("Please install manually: brew install --cask basictex")
-            return False
-        except FileNotFoundError:
-            print("Homebrew not found. Please install Homebrew first:")
-            print("  /bin/bash -c \"$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)\"")
-            return False
+        print("To install LaTeX on macOS, please run the following command:")
+        print("  brew install --cask basictex")
+        print("After installation, please ensure the TeX binaries are in your PATH and run this script again.")
+        return False
 
     elif system == "Linux":
-        print("Installing LaTeX distribution (texlive-full) on Linux...")
-        try:
-            # Try to detect package manager
-            if subprocess.run(["which", "apt-get"], capture_output=True).returncode == 0:
-                result = subprocess.run(
-                    ["sudo", "apt-get", "update"],
-                    capture_output=True, text=True, check=True
-                )
-                result = subprocess.run(
-                    ["sudo", "apt-get", "install", "-y", "texlive-full"],
-                    capture_output=True, text=True, check=True
-                )
-                print("LaTeX installation completed successfully!")
-                return True
-            elif subprocess.run(["which", "yum"], capture_output=True).returncode == 0:
-                result = subprocess.run(["sudo", "yum", "install", "-y", "texlive"],
-                                      capture_output=True, text=True, check=True)
-                print("LaTeX installation completed successfully!")
-                return True
-            else:
-                print("Unsupported package manager. Please install LaTeX manually:")
-                print("  - Ubuntu/Debian: sudo apt-get install texlive-full")
-                print("  - CentOS/RHEL: sudo yum install texlive")
-                return False
-        except subprocess.CalledProcessError as e:
-            print(f"Error installing LaTeX: {e}")
-            return False
+        print("To install LaTeX on your system, please run one of the following commands:")
+        print()
+        print("For Debian/Ubuntu-based systems:")
+        print("  sudo apt-get update && sudo apt-get install -y texlive-full")
+        print()
+        print("For RHEL/CentOS-based systems:")
+        print("  sudo yum install -y texlive")
+        print()
+        print("After installation, please run this script again.")
+        return False
 
     elif system == "Windows":
         print("Please install MiKTeX manually:")
@@ -911,6 +872,15 @@ def install_latex():
 
 def compile_latex_to_pdf(latex_file):
     """Compile LaTeX file to PDF using pdflatex"""
+    # Validate input file path
+    if not validate_file_path(latex_file):
+        print(f"Error: Invalid file path: {latex_file}")
+        return False
+    
+    if not os.path.exists(latex_file):
+        print(f"Error: File not found: {latex_file}")
+        return False
+    
     try:
         # Find pdflatex executable
         pdflatex_path = find_pdflatex()
@@ -919,7 +889,7 @@ def compile_latex_to_pdf(latex_file):
             print("Would you like to install a LaTeX distribution now? (y/n)")
 
             try:
-                user_input = input("Would you like to install a LaTeX distribution now? (y/n): ").strip().lower()
+                user_input = get_single_char_input()
                 if user_input in ['y', 'yes']:
                     if install_latex():
                         print("Please restart your terminal and try again.")
@@ -940,69 +910,61 @@ def compile_latex_to_pdf(latex_file):
         latex_dir = latex_path.parent
         latex_name = latex_path.stem
 
+        # Validate filename for security
+        if not re.match(r'^[a-zA-Z0-9_-]+$', latex_name):
+            print(f"Error: Invalid filename characters in: {latex_name}")
+            return False
+
         # Create a temporary directory for compilation
-        with tempfile.TemporaryDirectory() as temp_dir:
+        temp_dir = None
+        
+        try:
+            temp_dir = tempfile.mkdtemp()
+            
             # Copy the LaTeX file to the temporary directory
             temp_latex_file = os.path.join(temp_dir, f"{latex_name}.tex")
             shutil.copy2(latex_file, temp_latex_file)
 
-            # Change to temporary directory for compilation
-            original_dir = os.getcwd()
-            os.chdir(temp_dir)
+            # Run pdflatex with proper error handling
+            print(f"Compiling {latex_file} to PDF...")
 
-            try:
-                # Run pdflatex with proper error handling
-                print(f"Compiling {latex_file} to PDF...")
+            result = safe_subprocess_run(
+                [pdflatex_path, "-interaction=nonstopmode", f"{latex_name}.tex"],
+                capture_output=True,
+                text=True,
+                check=False,  # Don't raise exception, handle manually
+                cwd=temp_dir
+            )
 
-                # Prepare environment with LaTeX paths
-                env = os.environ.copy()
-                if "/usr/local/texlive" not in env.get("PATH", ""):
-                    env["PATH"] = env.get("PATH", "") + ":/usr/local/texlive/2024basic/bin/universal-darwin"
+            # Check if compilation was successful
+            if result.returncode != 0:
+                print(f"LaTeX compilation failed with return code: {result.returncode}")
+                if result.stdout:
+                    print("LaTeX output:")
+                    print(result.stdout)
+                if result.stderr:
+                    print("LaTeX errors:")
+                    print(result.stderr)
+                return False
 
-                result = subprocess.run(
-                    [pdflatex_path, "-interaction=nonstopmode", f"{latex_name}.tex"],
-                    capture_output=True,
-                    text=True,
-                    check=False,  # Don't raise exception, handle manually
-                    env=env
-                )
+            # Copy the generated PDF back to the original directory
+            pdf_file = f"{latex_name}.pdf"
+            if os.path.exists(os.path.join(temp_dir, pdf_file)):
+                output_pdf = os.path.join(latex_dir, pdf_file)
+                shutil.copy2(os.path.join(temp_dir, pdf_file), output_pdf)
+                print(f"PDF generated successfully: {output_pdf}")
+                return True
+            else:
+                print("PDF file was not generated")
+                return False
 
-                # Check if compilation was successful
-                if result.returncode != 0:
-                    print(f"LaTeX compilation failed with return code: {result.returncode}")
-                    if result.stdout:
-                        print("LaTeX output:")
-                        print(result.stdout)
-                    if result.stderr:
-                        print("LaTeX errors:")
-                        print(result.stderr)
-                    return False
-
-                # Copy the generated PDF back to the original directory
-                pdf_file = f"{latex_name}.pdf"
-                if os.path.exists(pdf_file):
-                    output_pdf = os.path.join(original_dir, pdf_file)
-                    shutil.copy2(pdf_file, output_pdf)
-                    print(f"PDF generated successfully: {output_pdf}")
-
-                    # Clean up temporary files in the original directory
-                    temp_extensions = ['.aux', '.log', '.out', '.fdb_latexmk', '.fls', '.synctex.gz']
-                    for ext in temp_extensions:
-                        temp_file = os.path.join(original_dir, f"{latex_name}{ext}")
-                        if os.path.exists(temp_file):
-                            try:
-                                os.remove(temp_file)
-                            except OSError:
-                                pass  # Ignore errors if file can't be removed
-
-                    return True
-                else:
-                    print("PDF file was not generated")
-                    return False
-
-            finally:
-                # Change back to original directory
-                os.chdir(original_dir)
+        finally:
+            # Clean up temporary directory
+            if temp_dir and os.path.exists(temp_dir):
+                try:
+                    shutil.rmtree(temp_dir)
+                except OSError:
+                    pass  # Ignore cleanup errors
 
     except subprocess.CalledProcessError as e:
         print(f"Error compiling PDF: {e}")
@@ -1039,7 +1001,7 @@ Need help? (y/n)"""
                        help='Validate the generated LaTeX file')
     parser.add_argument('-c', '--check', action='store_true',
                        help='Only check existing LaTeX file without generating new one')
-    parser.add_argument('-t', '--template', '--t', '-template', '--template', action='store_true',
+    parser.add_argument('-t', '--template', action='store_true',
                        help='Create a new resume template JSON file')
     parser.add_argument('-p', '--pdf', action='store_true',
                        help='Compile LaTeX file to PDF')
@@ -1065,6 +1027,14 @@ Need help? (y/n)"""
 
     # If check mode, validate existing file
     if args.check:
+        if not args.input_file:
+            print("Error: Input file required for check mode")
+            sys.exit(1)
+        
+        if not validate_file_path(args.input_file):
+            print(f"Error: Invalid file path: {args.input_file}")
+            sys.exit(1)
+            
         if validate_latex_syntax(args.input_file):
             sys.exit(0)
         else:
@@ -1138,6 +1108,11 @@ Need help? (y/n)"""
             print("\nOperation cancelled.")
             sys.exit(1)
 
+    # Validate input file path
+    if args.input_file and not validate_file_path(args.input_file):
+        print(f"Error: Invalid file path: {args.input_file}")
+        sys.exit(1)
+
     # Check if input file is a LaTeX file (ends with .tex)
     if args.input_file and args.input_file.endswith('.tex'):
         # Direct LaTeX to PDF compilation
@@ -1165,6 +1140,10 @@ Need help? (y/n)"""
     # Determine output filename
     if args.output:
         output_file = args.output
+        # Validate output file path
+        if not validate_file_path(output_file):
+            print(f"Error: Invalid output file path: {output_file}")
+            sys.exit(1)
     else:
         output_file = generate_output_filename(resume_data)
 
