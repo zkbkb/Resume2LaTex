@@ -1,4 +1,4 @@
-name: CI - Resume2LaTeX Testing
+name: Functionality Test
 
 on:
   push:
