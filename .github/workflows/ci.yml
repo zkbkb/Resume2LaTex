@@ -1,0 +1,139 @@
+name: CI - Resume2LaTeX Testing
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+  workflow_dispatch:
+
+jobs:
+  test-resume2latex:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.11'
+        
+    - name: Install LaTeX dependencies
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y texlive-latex-base texlive-latex-extra texlive-fonts-recommended texlive-fonts-extra texlive-latex-recommended
+        sudo apt-get install -y latexmk
+        
+    - name: Test template generation
+      run: |
+        echo "Testing template generation..."
+        python3 resume2latex.py -t
+        if [ ! -f "resume_template.json" ]; then
+          echo "ERROR: Template file was not created"
+          exit 1
+        fi
+        echo "✓ Template generation successful"
+        
+    - name: Validate template JSON
+      run: |
+        echo "Validating generated template JSON..."
+        python3 -c "
+        import json
+        try:
+            with open('resume_template.json', 'r', encoding='utf-8') as f:
+                data = json.load(f)
+            print('✓ Template JSON is valid')
+        except json.JSONDecodeError as e:
+            print(f'ERROR: Invalid JSON in template: {e}')
+            exit(1)
+        "
+        
+    - name: Test LaTeX generation from template
+      run: |
+        echo "Testing LaTeX generation from template..."
+        python3 resume2latex.py resume_template.json -o test_resume.tex
+        if [ ! -f "test_resume.tex" ]; then
+          echo "ERROR: LaTeX file was not generated"
+          exit 1
+        fi
+        echo "✓ LaTeX generation successful"
+        
+    - name: Validate LaTeX syntax
+      run: |
+        echo "Validating LaTeX syntax..."
+        python3 resume2latex.py -c test_resume.tex
+        if [ $? -ne 0 ]; then
+          echo "ERROR: LaTeX syntax validation failed"
+          exit 1
+        fi
+        echo "✓ LaTeX syntax validation passed"
+        
+    - name: Compile LaTeX to PDF
+      run: |
+        echo "Compiling LaTeX to PDF..."
+        latexmk -pdf -interaction=nonstopmode test_resume.tex
+        if [ ! -f "test_resume.pdf" ]; then
+          echo "ERROR: PDF compilation failed"
+          exit 1
+        fi
+        echo "✓ PDF compilation successful"
+        
+    - name: Test with sample data
+      run: |
+        echo "Testing with sample.json if it exists..."
+        if [ -f "sample.json" ]; then
+          echo "Using sample.json for additional testing..."
+          python3 resume2latex.py sample.json -o sample_resume.tex
+          python3 resume2latex.py -c sample_resume.tex
+          latexmk -pdf -interaction=nonstopmode sample_resume.tex
+          echo "✓ Sample data processing successful"
+        else
+          echo "No sample.json found, skipping sample test"
+        fi
+        
+    - name: Test help functionality
+      run: |
+        echo "Testing help functionality..."
+        python3 resume2latex.py --help
+        if [ $? -ne 0 ]; then
+          echo "ERROR: Help command failed"
+          exit 1
+        fi
+        echo "✓ Help functionality working"
+        
+    - name: Test validation flag
+      run: |
+        echo "Testing validation flag..."
+        python3 resume2latex.py resume_template.json -v -o validated_resume.tex
+        if [ $? -ne 0 ]; then
+          echo "ERROR: Validation flag test failed"
+          exit 1
+        fi
+        echo "✓ Validation flag working"
+        
+    - name: Upload artifacts
+      uses: actions/upload-artifact@v4
+      with:
+        name: generated-files
+        path: |
+          *.tex
+          *.pdf
+          resume_template.json
+        retention-days: 7
+        
+    - name: Test summary
+      run: |
+        echo "=== CI Test Summary ==="
+        echo "✓ Template generation: PASSED"
+        echo "✓ JSON validation: PASSED"
+        echo "✓ LaTeX generation: PASSED"
+        echo "✓ LaTeX syntax validation: PASSED"
+        echo "✓ PDF compilation: PASSED"
+        echo "✓ Help functionality: PASSED"
+        echo "✓ Validation flag: PASSED"
+        echo ""
+        echo "All tests completed successfully!"
+        echo "Generated files:"
+        ls -la *.tex *.pdf resume_template.json 2>/dev/null || echo "No files to list" 
