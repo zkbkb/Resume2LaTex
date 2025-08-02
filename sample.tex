@@ -1,0 +1,186 @@
+\documentclass[letterpaper,11pt]{article}
+
+%---------- PACKAGES ----------
+\usepackage{latexsym}
+\usepackage[empty]{fullpage}
+\usepackage{titlesec}
+\usepackage{marvosym}
+\usepackage[usenames,dvipsnames]{color}
+\usepackage{times}    % main text in Times New Roman
+\usepackage{verbatim}
+\usepackage{enumitem}
+\usepackage[hidelinks]{hyperref}
+\usepackage{fancyhdr}
+\usepackage[english]{babel}
+\usepackage{tabularx}
+\usepackage{hyphenat}
+
+%---------- PAGE SETUP ----------
+\pagestyle{fancy}
+\fancyhf{} % clear all header and footer fields
+\fancyfoot{}
+\renewcommand{\headrulewidth}{0pt}
+\renewcommand{\footrulewidth}{0pt}
+
+% Adjust margins
+\addtolength{\oddsidemargin}{-0.5in}
+\addtolength{\evensidemargin}{-0.5in}
+\addtolength{\textwidth}{1in}
+\addtolength{\topmargin}{-.5in}
+\addtolength{\textheight}{1.0in}
+
+\urlstyle{same}
+\raggedbottom
+\raggedright
+\setlength{\tabcolsep}{0in}
+
+%---------- SECTION FORMATTING ----------
+\titleformat{\section}{
+  \vspace{-4pt}\scshape\raggedright\large
+}{}{0em}{}[\color{black}\titlerule \vspace{-5pt}]
+
+% Ensure that generate pdf is machine readable/ATS parsable
+\pdfgentounicode=1
+
+%---------- CUSTOM COMMANDS ----------
+
+% Basic item command
+\newcommand{\resumeItem}[1]{
+  \item \small{ #1 }
+}
+
+% Subheading with 4 parameters: company, location, position, date
+\newcommand{\resumeSubheading}[4]{
+  \vspace{-2pt}\item
+    \begin{tabular*}{0.97\textwidth}[t]{l@{\extracolsep{\fill}}r}
+      \textbf{#1} & #2 \\
+      {\small #3} & {\small #4} \\
+    \end{tabular*}\vspace{-7pt}
+}
+
+% Sub-subheading with 2 parameters: title, date
+\newcommand{\resumeSubSubheading}[2]{
+    \vspace{-2pt}\item
+    \begin{tabular*}{0.97\textwidth}{l@{\extracolsep{\fill}}r}
+      {\small #1} & {\small #2} \\
+    \end{tabular*}\vspace{-7pt}
+}
+
+% Education heading with 4 parameters: university, location, degree, date
+\newcommand{\resumeEducationHeading}[4]{
+  \vspace{-2pt}\item
+    \begin{tabular*}{0.97\textwidth}[t]{l@{\extracolsep{\fill}}r}
+      \textbf{#1} & #2 \\
+      {\small #3} & {\small #4} \\
+    \end{tabular*}\vspace{-7pt}
+}
+
+% Project heading with 2 parameters: project name, date
+\newcommand{\resumeProjectHeading}[2]{
+    \vspace{-2pt}\item
+    \begin{tabular*}{0.97\textwidth}{l@{\extracolsep{\fill}}r}
+      \small#1 & #2 \\
+    \end{tabular*}\vspace{-7pt}
+}
+
+% Organization heading with 4 parameters: company, date, position, location
+\newcommand{\resumeOrganizationHeading}[4]{
+  \vspace{-2pt}\item
+    \begin{tabular*}{0.97\textwidth}[t]{l@{\extracolsep{\fill}}r}
+      \textbf{#1} & \textit{\small #2} \\
+      \textit{\small#3}
+    \end{tabular*}\vspace{-7pt}
+}
+
+% Sub-item with extra spacing
+\newcommand{\resumeSubItem}[1]{\resumeItem{#1}\vspace{-4pt}}
+
+% List environment commands
+\newcommand{\resumeSubHeadingListStart}{\begin{itemize}[leftmargin=0.15in, label={}]}
+\newcommand{\resumeSubHeadingListEnd}{\end{itemize}}
+\newcommand{\resumeItemListStart}{\begin{itemize}[leftmargin=*, itemsep=2pt, label=\textbullet]}
+\newcommand{\resumeItemListEnd}{\end{itemize}\vspace{-5pt}}
+
+%-------------------------------------------
+%%%%%%  RESUME STARTS HERE  %%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{document}
+
+%---------- HEADING ----------
+\begin{center}
+    \textbf{\Huge \scshape John Doe} \\ \vspace{3pt}
+    \small
+    +44 7123 456789 $|$ john.doe@example.com $|$ London, UK $|$ example.com
+\end{center}
+
+%---------- EDUCATION -----------
+\section{EDUCATION}
+  \vspace{3pt}
+  \resumeSubHeadingListStart
+  
+    \resumeEducationHeading
+      {University College London}{London, UK}
+      {B.S. in Cognitive Science}{Sept. 2022 -- June 2025}
+
+        \resumeItemListStart
+            \resumeItem{Core Modules: Introduction to Cognitive Science, Neuroscience and Computation, Data Structures and Algorithms, Machine Learning, Natural Language Processing}
+            \resumeItem{Grade: First Class Honours}
+        \resumeItemListEnd
+  
+  \resumeSubHeadingListEnd
+
+%---------- PROFESSIONAL EXPERIENCE -----------
+\section{PROFESSIONAL EXPERIENCE}
+  \vspace{3pt}
+  \resumeSubHeadingListStart
+
+    \resumeSubheading
+      {Google DeepMind}{London, UK}
+      {Research Intern}{June 2024 -- Sept. 2024}
+        \resumeItemListStart
+            \resumeItem{Managed and executed large-scale data preprocessing and analysis pipelines for training foundational language models. Utilized Python, Pandas, and NumPy to process terabytes of text data, ensuring data quality and feature integrity for model consumption.}
+            \resumeItem{Actively collaborated with a team of senior researchers on a high-impact project, contributing to the rigorous analysis and documentation of experimental results. Co-authored sections of a research paper manuscript intended for submission to a top-tier machine learning conference.}
+        \resumeItemListEnd
+    \resumeSubheading
+      {Gatsby Computational Neuroscience Unit}{London, UK}
+      {Research Intern}{June 2025 -- Sept. 2025}
+        \resumeItemListStart
+            \resumeItem{Investigated neural coding principles by developing and applying sophisticated machine learning models to analyze multi-electrode recording data from the visual cortex, with the objective of decoding sensory information from raw spike train patterns.}
+            \resumeItem{Implemented and validated Bayesian inference models in Python using libraries such as PyMC to simulate and understand neural decision-making processes under conditions of uncertainty, subsequently comparing model predictions against empirical data.}
+            \resumeItem{Contributed to a cutting-edge research project on hierarchical reinforcement learning aimed at modeling complex, goal-directed behavior in the prefrontal cortex. This involved assisting in the design of computational experiments and creating detailed visualizations of simulation outcomes.}
+        \resumeItemListEnd
+  \resumeSubHeadingListEnd
+
+%---------- PROJECT EXPERIENCE -----------
+\section{PROJECT EXPERIENCE}
+    \vspace{3pt}
+    \resumeSubHeadingListStart
+      
+      \resumeProjectHeading
+        {\textbf{Predictive Text Model from EEG Signals}}{Jan. 2024 -- Apr. 2024}
+          \resumeItemListStart
+            \resumeItem{Architected and implemented a sophisticated deep learning model, leveraging a combination of Convolutional Neural Networks (CNNs) and Long Short-Term Memory (LSTM) networks with TensorFlow and Keras. The model was designed to effectively classify complex, high-dimensional brainwave patterns from raw EEG data.}
+            \resumeItem{Attained a benchmark accuracy of 85\% in decoding and predicting user's intended text directly from real-time neural signals, demonstrating the model's high fidelity and potential for brain-computer interface (BCI) applications.}
+            \resumeItem{Engineered a novel data augmentation pipeline specifically for time-series EEG data, which synthetically expanded the training dataset by 300\%. This significantly improved model generalization and robustness against signal noise and subject-specific variability.}
+          \resumeItemListEnd
+      \resumeProjectHeading
+        {\textbf{Computational Linguistics Analysis of Text Corpora}}{Sept. 2023 -- Dec. 2023}
+          \resumeItemListStart
+            \resumeItem{Leveraged natural language processing techniques with NLTK and SpaCy, including multi-word expression tokenization, fine-grained part-of-speech tagging, and context-aware named-entity recognition to extract meaningful linguistic features.}
+            \resumeItem{Developed a series of compelling data visualizations and dynamic dashboards using Matplotlib and Seaborn. These reports provided clear, insightful narratives on the discovered linguistic patterns and sentiment trajectories, making complex data accessible to a non-technical audience.}
+          \resumeItemListEnd
+    \resumeSubHeadingListEnd
+
+%---------- ADDITIONAL INFORMATION -----------
+\section{ADDITIONAL INFORMATION}
+  \vspace{2pt}
+  \resumeSubHeadingListStart
+    \small{\item{
+        \textbf{Languages:} English (Native), French (Intermediate), British Sign Language (Elementary) \\ \vspace{3pt}
+        
+        \textbf{Technical Skills:} Python, PyTorch, TensorFlow, scikit-learn, Pandas, NumPy, Java, C++, Git, Docker, EEG/fMRI data analysis \\ \vspace{3pt}
+    }}
+  \resumeSubHeadingListEnd
+
+%-------------------------------------------
+\end{document}

@@ -1,0 +1,93 @@
+{
+    "personal_info": {
+        "name": "John Doe",
+        "phone": "+44 7123 456789",
+        "email": "john.doe@example.com",
+        "location": "London, UK",
+        "website": "example.com"
+    },
+    "education": {
+        "institution": "University College London",
+        "location": "London, UK",
+        "degree": "B.S. in Cognitive Science",
+        "period": "Sept. 2022 -- June 2025",
+        "details": {
+            "core_modules": [
+                "Introduction to Cognitive Science",
+                "Neuroscience and Computation",
+                "Data Structures and Algorithms",
+                "Machine Learning",
+                "Natural Language Processing"
+            ],
+            "grade": "First Class Honours"
+        }
+    },
+    "professional_experience": [{
+            "company": "Google DeepMind",
+            "location": "London, UK",
+            "position": "Research Intern",
+            "period": "June 2024 -- Sept. 2024",
+            "description": [
+                "Managed and executed large-scale data preprocessing and analysis pipelines for training foundational language models. Utilized Python, Pandas, and NumPy to process terabytes of text data, ensuring data quality and feature integrity for model consumption.",
+                "Actively collaborated with a team of senior researchers on a high-impact project, contributing to the rigorous analysis and documentation of experimental results. Co-authored sections of a research paper manuscript intended for submission to a top-tier machine learning conference."
+            ]
+        },
+        {
+            "company": "Gatsby Computational Neuroscience Unit",
+            "location": "London, UK",
+            "position": "Research Intern",
+            "period": "June 2025 -- Sept. 2025",
+            "description": [
+                "Investigated neural coding principles by developing and applying sophisticated machine learning models to analyze multi-electrode recording data from the visual cortex, with the objective of decoding sensory information from raw spike train patterns.",
+                "Implemented and validated Bayesian inference models in Python using libraries such as PyMC to simulate and understand neural decision-making processes under conditions of uncertainty, subsequently comparing model predictions against empirical data.",
+                "Contributed to a cutting-edge research project on hierarchical reinforcement learning aimed at modeling complex, goal-directed behavior in the prefrontal cortex. This involved assisting in the design of computational experiments and creating detailed visualizations of simulation outcomes."
+            ]
+        }
+    ],
+    "project_experience": [{
+            "name": "Predictive Text Model from EEG Signals",
+            "period": "Jan. 2024 -- Apr. 2024",
+            "description": [
+                "Architected and implemented a sophisticated deep learning model, leveraging a combination of Convolutional Neural Networks (CNNs) and Long Short-Term Memory (LSTM) networks with TensorFlow and Keras. The model was designed to effectively classify complex, high-dimensional brainwave patterns from raw EEG data.",
+                "Attained a benchmark accuracy of 85% in decoding and predicting user's intended text directly from real-time neural signals, demonstrating the model's high fidelity and potential for brain-computer interface (BCI) applications.",
+                "Engineered a novel data augmentation pipeline specifically for time-series EEG data, which synthetically expanded the training dataset by 300%. This significantly improved model generalization and robustness against signal noise and subject-specific variability."
+            ]
+        },
+        {
+            "name": "Computational Linguistics Analysis of Text Corpora",
+            "period": "Sept. 2023 -- Dec. 2023",
+            "description": [
+                "Leveraged natural language processing techniques with NLTK and SpaCy, including multi-word expression tokenization, fine-grained part-of-speech tagging, and context-aware named-entity recognition to extract meaningful linguistic features.",
+                "Developed a series of compelling data visualizations and dynamic dashboards using Matplotlib and Seaborn. These reports provided clear, insightful narratives on the discovered linguistic patterns and sentiment trajectories, making complex data accessible to a non-technical audience."
+            ]
+        }
+    ],
+    "additional_information": {
+        "languages": [{
+                "language": "English",
+                "proficiency": "Native"
+            },
+            {
+                "language": "French",
+                "proficiency": "Intermediate"
+            },
+            {
+                "language": "British Sign Language",
+                "proficiency": "Elementary"
+            }
+        ],
+        "skills": [
+            "Python",
+            "PyTorch",
+            "TensorFlow",
+            "scikit-learn",
+            "Pandas",
+            "NumPy",
+            "Java",
+            "C++",
+            "Git",
+            "Docker",
+            "EEG/fMRI data analysis"
+        ]
+    }
+}

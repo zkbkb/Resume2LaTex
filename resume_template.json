@@ -1,0 +1,120 @@
+{
+  "personal_info": {
+    "name": "John Doe",
+    "phone": "+44 7123 456789",
+    "email": "your.email@example.com",
+    "location": "City, Country",
+    "website": "your-website.com"
+  },
+  "education": {
+    "institution": "University Name (e.g., University College London)",
+    "location": "City, Country",
+    "degree": "Degree Type (e.g., B.S. Computer Science)",
+    "period": "Start Date -- End Date (e.g., Sept. 2020 -- June 2024)",
+    "details": {
+      "core_modules": [
+        "Course Module 1 (e.g., Data Structures and Algorithms)",
+        "Course Module 2 (e.g., Database Systems)",
+        "Course Module 3 (e.g., Software Engineering)",
+        "Course Module 4 (e.g., Machine Learning)",
+        "Course Module 5 (or just leave blank)"
+      ],
+      "grade": "Expected Grade (e.g., First Class, 3.8 GPA)"
+    }
+  },
+  "professional_experience": [
+    {
+      "company": "Company Name 1 (e.g., Google Inc.)",
+      "location": "City, Country (e.g., Mountain View, CA, USA)",
+      "position": "Job Title (e.g., Software Engineer)",
+      "period": "Start Date -- End Date (e.g., Jan. 2024 -- Present)",
+      "description": [
+        "Description 1: Describe a specific accomplishment with quantifiable results (e.g., Increased efficiency by 25%)",
+        "Description 2: Another accomplishment with measurable impact",
+        "Description 3: Third accomplishment highlighting your skills and contributions"
+      ]
+    },
+    {
+      "company": "Company Name 2 (e.g., Microsoft Corporation)",
+      "location": "City, Country (e.g., Redmond, WA, USA)",
+      "position": "Previous Job Title (e.g., Junior Developer)",
+      "period": "Start Date -- End Date (e.g., June 2023 -- Dec. 2023)",
+      "description": [
+        "Description 1: Specific accomplishment with metrics",
+        "Description 2: Another significant contribution",
+        "Description 3: Third achievement demonstrating your value"
+      ]
+    },
+    {
+      "company": "Company Name 3 (e.g., Startup Inc.)",
+      "location": "City, Country (e.g., San Francisco, CA, USA)",
+      "position": "Internship/Entry Level Position (e.g., Software Engineering Intern)",
+      "period": "Start Date -- End Date (e.g., May 2022 -- Aug. 2022)",
+      "description": [
+        "Description 1: Internship accomplishment",
+        "Description 2: Learning outcome or project contribution",
+        "Description 3: Skill development or team contribution"
+      ]
+    }
+  ],
+  "project_experience": [
+    {
+      "name": "Project Name 1 (e.g., E-commerce Platform)",
+      "period": "Start Date -- End Date (e.g., Mar. 2024 -- Mar. 2024)",
+      "description": [
+        "Description 1: Describe a key feature or functionality you implemented",
+        "Description 2: Another important feature or technical achievement",
+        "Description 3: Third feature highlighting your technical skills"
+      ]
+    },
+    {
+      "name": "Project Name 2 (e.g., Machine Learning Model)",
+      "period": "Start Date -- End Date (e.g., Jan. 2024 -- Mar. 2024)",
+      "description": [
+        "Description 1: Describe what you accomplished in this project",
+        "Description 2: Another significant outcome or learning",
+        "Description 3: Third achievement showing your project management or technical skills"
+      ]
+    },
+    {
+      "name": "Competition/Challenge Name (e.g., Hackathon Winner)",
+      "period": "Start Date -- End Date (e.g., Feb. 2024 -- Feb. 2024)",
+      "description": [
+        "Description 1: What you accomplished in the competition",
+        "Description 2: Another outcome or recognition",
+        "Description 3: Third achievement demonstrating your competitive skills"
+      ]
+    }
+  ],
+  "additional_information": {
+    "languages": [
+      {
+        "language": "English",
+        "proficiency": "Native/Fluent/Intermediate/Basic"
+      },
+      {
+        "language": "Second Language (e.g., Spanish)",
+        "proficiency": "Native/Fluent/Intermediate/Basic"
+      },
+      {
+        "language": "Third Language (e.g., French)",
+        "proficiency": "Native/Fluent/Intermediate/Basic"
+      },
+      {
+        "language": "Fourth Language (e.g., Mandarin)",
+        "proficiency": "Native/Fluent/Intermediate/Basic"
+      }
+    ],
+    "skills": [
+      "Programming Language 1 (e.g., Python)",
+      "Programming Language 2 (e.g., JavaScript)",
+      "Database Technology (e.g., PostgreSQL)",
+      "Framework 1 (e.g., React)",
+      "Framework 2 (e.g., Django)",
+      "Tool 1 (e.g., Git)",
+      "Tool 2 (e.g., Docker)",
+      "Platform 1 (e.g., AWS)",
+      "Platform 2 (e.g., Google Cloud)"
+    ]
+  }
+}
