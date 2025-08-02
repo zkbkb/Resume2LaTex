@@ -38,7 +38,7 @@ def escape_latex(text):
     return text
 
 def get_single_char_input():
-    """Get a single character input without requiring Enter key"""
+    """Get a line of input from the user and return it as a stripped, lowercase string."""
     try:
         return input().strip().lower()
     except (EOFError, KeyboardInterrupt):
@@ -50,8 +50,22 @@ def validate_file_path(file_path):
         return False
     
     # Check for path traversal attempts
-    if '..' in file_path or file_path.startswith('/'):
+    if '..' in file_path:
         return False
+    
+    # Allow absolute paths only if they're in the current directory or subdirectories
+    if os.path.isabs(file_path):
+        # Get current working directory
+        current_dir = os.getcwd()
+        # Check if the file path is within the current directory
+        try:
+            # Resolve the absolute path
+            abs_path = os.path.abspath(file_path)
+            # Check if it's within current directory
+            if not abs_path.startswith(current_dir):
+                return False
+        except (OSError, ValueError):
+            return False
     
     # Check for potentially dangerous characters
     dangerous_chars = [';', '|', '&', '`', '$', '(', ')', '{', '}', '[', ']', '"', "'"]
@@ -76,7 +90,8 @@ def safe_subprocess_run(cmd, **kwargs):
         'python3', 'pip', 'curl', 'wget'
     }
     
-    if cmd[0] not in safe_commands:
+    # Check the base name of the command against the safe list
+    if os.path.basename(cmd[0]) not in safe_commands:
         raise ValueError(f"Command '{cmd[0]}' is not in the allowed list")
     
     return subprocess.run(cmd, **kwargs)
@@ -151,47 +166,81 @@ def generate_latex_header():
 \addtolength{\topmargin}{-.5in}
 \addtolength{\textheight}{1.0in}
 
+\urlstyle{same}
+\raggedbottom
+\raggedright
+\setlength{\tabcolsep}{0in}
+
+%---------- SECTION FORMATTING ----------
+\titleformat{\section}{
+  \vspace{-4pt}\scshape\raggedright\large
+}{}{0em}{}[\color{black}\titlerule \vspace{-5pt}]
+
+% Ensure that generate pdf is machine readable/ATS parsable
+\pdfgentounicode=1
+
 %---------- CUSTOM COMMANDS ----------
+
+% Basic item command
 \newcommand{\resumeItem}[1]{
-  \item\small{
-    {#1 \vspace{-2pt}}
-  }
+  \item \small{ #1 }
 }
 
+% Subheading with 4 parameters: company, location, position, date
 \newcommand{\resumeSubheading}[4]{
   \vspace{-2pt}\item
     \begin{tabular*}{0.97\textwidth}[t]{l@{\extracolsep{\fill}}r}
       \textbf{#1} & #2 \\
-      \textit{\small#3} & \textit{\small #4} \\
-    \end{tabular*}\vspace{-5pt}
+      {\small #3} & {\small #4} \\
+    \end{tabular*}\vspace{-7pt}
 }
 
+% Sub-subheading with 2 parameters: title, date
 \newcommand{\resumeSubSubheading}[2]{
-    \item
+    \vspace{-2pt}\item
     \begin{tabular*}{0.97\textwidth}{l@{\extracolsep{\fill}}r}
-      \textit{#1} & \textit{#2} \\
-    \end{tabular*}\vspace{-5pt}
+      {\small #1} & {\small #2} \\
+    \end{tabular*}\vspace{-7pt}
 }
 
-\newcommand{\resumeProjectHeading}[4]{
-    \item
+% Education heading with 4 parameters: university, location, degree, date
+\newcommand{\resumeEducationHeading}[4]{
+  \vspace{-2pt}\item
+    \begin{tabular*}{0.97\textwidth}[t]{l@{\extracolsep{\fill}}r}
+      \textbf{#1} & #2 \\
+      {\small #3} & {\small #4} \\
+    \end{tabular*}\vspace{-7pt}
+}
+
+% Project heading with 2 parameters: project name, date
+\newcommand{\resumeProjectHeading}[2]{
+    \vspace{-2pt}\item
     \begin{tabular*}{0.97\textwidth}{l@{\extracolsep{\fill}}r}
-      \textbf{#1} $|$ \textit{#2} & #3 \\
-      \textit{\small#4} \\
-    \end{tabular*}\vspace{-5pt}
+      \small#1 & #2 \\
+    \end{tabular*}\vspace{-7pt}
 }
 
-\newcommand{\resumeSectionStart}[1]{
-  \section{#1}
-  \begin{itemize}[leftmargin=0.15in, label={}]
-    \small{\item}
+% Organization heading with 4 parameters: company, date, position, location
+\newcommand{\resumeOrganizationHeading}[4]{
+  \vspace{-2pt}\item
+    \begin{tabular*}{0.97\textwidth}[t]{l@{\extracolsep{\fill}}r}
+      \textbf{#1} & \textit{\small #2} \\
+      \textit{\small#3}
+    \end{tabular*}\vspace{-7pt}
 }
 
-\newcommand{\resumeSectionEnd}{
-  \end{itemize}
-}
+% Sub-item with extra spacing
+\newcommand{\resumeSubItem}[1]{\resumeItem{#1}\vspace{-4pt}}
 
-%---------- DOCUMENT ----------
+% List environment commands
+\newcommand{\resumeSubHeadingListStart}{\begin{itemize}[leftmargin=0.15in, label={}]}
+\newcommand{\resumeSubHeadingListEnd}{\end{itemize}}
+\newcommand{\resumeItemListStart}{\begin{itemize}[leftmargin=*, itemsep=2pt, label=\textbullet]}
+\newcommand{\resumeItemListEnd}{\end{itemize}\vspace{-5pt}}
+
+%-------------------------------------------
+%%%%%%  RESUME STARTS HERE  %%%%%%%%%%%%%%%%%%%%%%%%%%%
+
 \begin{document}
 
 %---------- HEADING ----------
